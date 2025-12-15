@@ -1,26 +1,35 @@
-# **riscv-cpu**
+# **riscv-rv32i-cpu**
 
-A RISC-V CPU written in SystemVerilog that evolves from a simple single-cycle core into a pipelined, speculative, and eventually out-of-order microarchitecture.
+An experimental **RISC-V RV32I** processor core implemented in **SystemVerilog**, developed as a progressive exploration of CPU microarchitecture.
 
-This project is intended to be a clean, modular sandbox for experimenting with modern CPU architecture concepts.
+The design begins with a **single-cycle baseline implementation**, transitions to a **classic 5-stage in-order pipeline**, and is extended over time to investigate more advanced techniques such as **speculation, out-of-order execution, branch prediction, and cache hierarchies**. Each stage is intended to remain functionally correct and independently verifiable.
 
 ---
 
-## **Planned Features**
+## Design progression
 
-This CPU will gradually incorporate a range of advanced microarchitectural techniques, including:
+### 1. Single-cycle core
 
-* **Pipelining**
-* **Hazard detection and forwarding**
-* **Branch handling and branch prediction**
-* **Scoreboarding**
-* **Tomasulo’s algorithm**
-* **Register renaming**
-* **Reservation stations**
-* **Reorder Buffer (ROB)** for in-order commit
-* **Out-of-order execution**
-* **Speculative execution**
-* **Multi-issue / superscalar dispatch**
-* **Instruction and data caches**
+* RV32I base integer instruction set
+* One instruction completed per cycle
+* Monolithic datapath with centralized control
+* Minimal instruction and data memory interface
 
-Additional features may be added as the architecture evolves.
+### 2. Five-stage in-order pipeline
+
+* IF / ID / EX / MEM / WB pipeline organization
+* Data hazard detection and stall insertion
+* Forwarding / bypass networks
+* Basic control hazard handling
+
+### 3. Advanced microarchitectural extensions (ongoing work)
+
+The following features are explored incrementally and may evolve as the design matures:
+
+* Enhanced branch handling and dynamic branch prediction
+* Instruction and data caching
+* Dynamic scheduling and out-of-order execution
+* Tomasulo-style issue and wakeup mechanisms
+* Reorder buffer (ROB) for precise architectural state
+* Store buffering and load–store ordering mechanisms
+* Multiple-issue (superscalar) execution
