@@ -1,25 +1,39 @@
-`define ADD 3'b000
-`define SUB 3'b001
-`define XOR 3'b100
-`define OR 3'b011
-`define AND 3'b010
+`define AND 4'b0000
+`define OR 4'b0001
+`define ADD 4'b0010
+`define SUB 4'b0110
 
 module alu_control (
+    input  logic [1:0] ALUop,
     input  logic [2:0] funct3,
-    input  logic       funct7,
-    output logic [2:0] alu_op
+    input  logic       funct7_30,  /* instruction[30] */
+    output logic [3:0] ALUcontrol
 );
 
   always_comb begin
-    unique casez ({
-      funct7, funct3
-    })
-      4'b0_000: alu_op = `ADD;
-      4'b1_000: alu_op = `SUB;
-      4'b?_100: alu_op = `XOR;
-      4'b?_110: alu_op = `OR;
-      4'b?_111: alu_op = `AND;
-      default:  alu_op = 'x;
+    case (ALUop)
+      /* load / store */
+      2'b00: ALUcontrol = `ADD;
+
+      /* branch (beq) */
+      2'b01: ALUcontrol = `SUB;
+
+      /* R-type */
+      2'b10: begin
+        case (funct3)
+          3'b000: begin
+            /* ADD or SUB depends on funct7[30] */
+            if (funct7_30) ALUcontrol = `SUB;
+            else ALUcontrol = `ADD;
+          end
+
+          3'b111: ALUcontrol = `AND;
+          3'b110: ALUcontrol = `OR;
+
+          default: ALUcontrol = 4'd0;
+        endcase
+      end
+      default: ALUcontrol = 4'd0;
     endcase
   end
 

@@ -2,19 +2,23 @@ module register #(
     parameter int WIDTH = 1
 ) (
     input logic clk,
+    input logic reset,
     input logic [WIDTH-1:0] in,
     input logic load,
 
-    output logic [WIDTH-1:0] out
+  output logic [WIDTH-1:0] out
 );
 
-  logic [31:0] next_out;
+  logic [WIDTH-1:0] next_out;
   assign next_out = load ? in : out;
 
-  flop flop (
+  flop #(
+      .WIDTH(WIDTH)
+  ) flop (
       .clk(clk),
-      .d  (next_out),
-      .q  (out)
+      .reset(reset),
+      .d(next_out),
+      .q(out)
   );
 
 endmodule

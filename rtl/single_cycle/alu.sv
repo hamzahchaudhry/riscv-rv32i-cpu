@@ -1,25 +1,25 @@
-`define ADD 3'b000
-`define SUB 3'b001
-`define AND 3'b010
-`define OR 3'b011
-`define XOR 3'b100
+`define AND 4'b0000
+`define OR 4'b0001
+`define ADD 4'b0010
+`define SUB 4'b0110
 
 module alu (
+    input logic [ 3:0] ALUcontrol,
     input logic [31:0] Ain,
     input logic [31:0] Bin,
-    input logic [ 2:0] alu_op,
 
-    output logic [31:0] out
+    output logic [31:0] alu_out,
+    output logic zero
 );
 
+  assign zero = (alu_out == 32'b0);
   always_comb begin
-    unique case (alu_op)
-      `ADD: out = Ain + Bin;
-      `SUB: out = Ain - Bin;
-      `AND: out = Ain & Bin;
-      `OR: out = Ain | Bin;
-      `XOR: out = Ain ^ Bin;
-      default: out = 'x;
+    unique case (ALUcontrol)
+      `AND: alu_out = Ain & Bin;
+      `OR: alu_out = Ain | Bin;
+      `ADD: alu_out = Ain + Bin;
+      `SUB: alu_out = Ain - Bin;
+      default: alu_out = 'x;
     endcase
   end
 
