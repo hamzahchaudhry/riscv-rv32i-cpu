@@ -33,3 +33,27 @@ The following features are explored incrementally and may evolve as the design m
 * Reorder buffer (ROB) for precise architectural state
 * Store buffering and load–store ordering mechanisms
 * Multiple-issue (superscalar) execution
+
+---
+
+## Repository layout
+
+* `rtl/` — SystemVerilog RTL sources by core type
+* `tb/` — Testbenches and test assets (e.g., memory init hex files)
+* `work/` — Simulator work directory (ignored)
+
+---
+
+## Simulation (ModelSim/Questa)
+
+From the repo root:
+
+```sh
+make sim
+```
+
+Clean generated artifacts:
+
+```sh
+make clean
+```

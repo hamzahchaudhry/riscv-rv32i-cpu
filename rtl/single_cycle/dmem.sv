@@ -1,4 +1,6 @@
-module dmem (
+module dmem #(
+    parameter string DMEM_INIT = "dmem.hex"
+) (
     input  logic        clk,
     input  logic        we,
     input  logic [31:0] addr,
@@ -14,7 +16,7 @@ module dmem (
   assign word_addr = addr[9:2];
 
   initial begin
-    $readmemh("dmem.hex", mem);
+    $readmemh(DMEM_INIT, mem);
   end
 
   /* asynchronous read */

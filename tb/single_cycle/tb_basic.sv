@@ -2,7 +2,10 @@ module tb_basic;
   logic clk = 0;
   logic reset = 1;
 
-  singlecycle_top dut (
+  singlecycle_top #(
+      .IMEM_INIT("tb/single_cycle/imem.hex"),
+      .DMEM_INIT("tb/single_cycle/dmem.hex")
+  ) dut (
       .clk  (clk),
       .reset(reset)
   );

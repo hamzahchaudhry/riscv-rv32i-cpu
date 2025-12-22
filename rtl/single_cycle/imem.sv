@@ -1,4 +1,6 @@
-module imem (
+module imem #(
+    parameter string IMEM_INIT = "imem.hex"
+) (
     input  logic [31:0] pc,
     output logic [31:0] instr
 );
@@ -16,7 +18,7 @@ module imem (
   end
 
   initial begin
-    $readmemh("imem.hex", mem);
+    $readmemh(IMEM_INIT, mem);
   end
 
 endmodule

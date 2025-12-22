@@ -1,4 +1,7 @@
-module singlecycle_top (
+module singlecycle_top #(
+    parameter string IMEM_INIT = "imem.hex",
+    parameter string DMEM_INIT = "dmem.hex"
+) (
     input logic clk,
     input logic reset
 );
@@ -10,12 +13,16 @@ module singlecycle_top (
   logic [1:0] alu_op;
   logic [2:0] alu_ctrl;
 
-  imem imem (
+  imem #(
+      .IMEM_INIT(IMEM_INIT)
+  ) imem (
       .pc(pc),
       .instr(instr)
   );
 
-  dmem dmem (
+  dmem #(
+      .DMEM_INIT(DMEM_INIT)
+  ) dmem (
       .clk (clk),
       .we  (mem_we),
       .addr(addr),
