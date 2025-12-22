@@ -1,10 +1,9 @@
-module flop #(
+module dff #(
     parameter int WIDTH = 1
 ) (
     input logic clk,
     input logic reset,
     input logic [WIDTH-1:0] d,
-
     output logic [WIDTH-1:0] q
 );
 

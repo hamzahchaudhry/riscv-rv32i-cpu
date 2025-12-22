@@ -1,39 +1,39 @@
-`define AND 4'b0000
-`define OR 4'b0001
-`define ADD 4'b0010
-`define SUB 4'b0110
-
 module alu_control (
-    input  logic [1:0] ALUop,
-    input  logic [2:0] funct3,
-    input  logic       funct7_30,  /* instruction[30] */
-    output logic [3:0] ALUcontrol
+    input logic [1:0] alu_op,
+    input logic [2:0] funct3,
+    input logic funct7_5,
+    output logic [2:0] alu_ctrl
 );
 
+  localparam logic [2:0] ADD = 3'b000;
+  localparam logic [2:0] SUB = 3'b001;
+  localparam logic [2:0] AND = 3'b011;
+  localparam logic [2:0] OR = 3'b100;
+  localparam logic [2:0] XOR = 3'b101;
+  localparam logic [2:0] SLT = 3'b110;
   always_comb begin
-    case (ALUop)
-      /* load / store */
-      2'b00: ALUcontrol = `ADD;
-
-      /* branch (beq) */
-      2'b01: ALUcontrol = `SUB;
+    case (alu_op)
 
       /* R-type */
-      2'b10: begin
-        case (funct3)
-          3'b000: begin
-            /* ADD or SUB depends on funct7[30] */
-            if (funct7_30) ALUcontrol = `SUB;
-            else ALUcontrol = `ADD;
-          end
+      2'b00: alu_ctrl = funct7_5 ? SUB : ADD;
 
-          3'b111: ALUcontrol = `AND;
-          3'b110: ALUcontrol = `OR;
+      /* load + store */
+      2'b01: alu_ctrl = ADD;
 
-          default: ALUcontrol = 4'd0;
-        endcase
-      end
-      default: ALUcontrol = 4'd0;
+      /* I-type */
+      2'b10:
+      casez (funct3)
+        3'b000:  alu_ctrl = ADD;
+        3'b01x:  alu_ctrl = SLT;
+        3'b100:  alu_ctrl = XOR;
+        3'b110:  alu_ctrl = OR;
+        3'b111:  alu_ctrl = AND;
+        default: alu_ctrl = 3'b111;
+      endcase
+
+      2'b11: alu_ctrl = SUB;
+
+      default: alu_ctrl = 3'b111;
     endcase
   end
 

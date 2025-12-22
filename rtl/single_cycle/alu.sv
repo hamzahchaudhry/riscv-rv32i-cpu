@@ -1,25 +1,29 @@
-`define AND 4'b0000
-`define OR 4'b0001
-`define ADD 4'b0010
-`define SUB 4'b0110
-
 module alu (
-    input logic [ 3:0] ALUcontrol,
-    input logic [31:0] Ain,
-    input logic [31:0] Bin,
+    input logic [ 2:0] alu_ctrl,
+    input logic [31:0] A,
+    input logic [31:0] B,
 
     output logic [31:0] alu_out,
     output logic zero
 );
 
+  localparam logic [2:0] ADD = 3'b000;
+  localparam logic [2:0] SUB = 3'b001;
+  localparam logic [2:0] AND = 3'b011;
+  localparam logic [2:0] OR = 3'b100;
+  localparam logic [2:0] XOR = 3'b101;
+  localparam logic [2:0] SLT = 3'b110;
+
   assign zero = (alu_out == 32'b0);
+
   always_comb begin
-    unique case (ALUcontrol)
-      `AND: alu_out = Ain & Bin;
-      `OR: alu_out = Ain | Bin;
-      `ADD: alu_out = Ain + Bin;
-      `SUB: alu_out = Ain - Bin;
-      default: alu_out = 'x;
+    unique case (alu_ctrl)
+      ADD: alu_out = A + B;
+      SUB: alu_out = A - B;
+      AND: alu_out = A & B;
+      OR: alu_out = A | B;
+      XOR: alu_out = A ^ B;
+      default: alu_out = 32'd0;
     endcase
   end
 
