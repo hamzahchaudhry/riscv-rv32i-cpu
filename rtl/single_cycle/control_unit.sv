@@ -1,81 +1,101 @@
 module control_unit (
     input logic [6:0] opcode,
-
+    input logic zero,
     output logic pc_src,
-    output logic reg_we,
-    output logic alu_src,
+    output logic [1:0] result_src,
     output logic mem_we,
-    output logic result_src,
-
+    output logic alu_src,
+    output logic reg_we,
     output logic [1:0] alu_op
 );
 
+  logic jump, branch;
+  assign pc_src = (branch && zero) || jump;
+
   always_comb begin
-    // defaults
-    pc_src     = 1'b0;
-    reg_we     = 1'b0;
-    alu_src    = 1'b0;
+    result_src = 2'b00;
     mem_we     = 1'b0;
-    result_src = 1'b0;
+    alu_src    = 1'b0;
+    reg_we     = 1'b0;
     alu_op     = 2'b00;
+    branch     = 1'd0;
+    jump       = 1'd0;
 
     unique case (opcode)
-      // R-type: OP
-      7'b0110011: begin
-        reg_we     = 1'b1;
-        alu_src    = 1'b0;
-        alu_op     = 2'b00;  // "use funct" (common encoding)
-        mem_we     = 1'b0;
-        result_src = 1'b1;  // ALU result
-      end
-
-      // I-type arithmetic: OP-IMM
-      7'b0010011: begin
-        reg_we     = 1'b1;
-        alu_src    = 1'b1;  // immediate
-        alu_op     = 2'b10;  // use funct3/funct7_5 (for shifts etc later)
-        mem_we     = 1'b0;
-        result_src = 1'b1;  // ALU result
-      end
-
-      // Load
+      /* lw */
       7'b0000011: begin
-        reg_we     = 1'b1;
-        alu_src    = 1'b1;  // base + imm
-        alu_op     = 2'b01;  // ADD
+        result_src = 2'b01;
         mem_we     = 1'b0;
-        result_src = 1'b0;  // MEM data
+        alu_src    = 1'b1;
+        reg_we     = 1'b1;
+        alu_op     = 2'b00;
+        branch     = 1'd0;
+        jump       = 1'd0;
       end
 
-      // Store
+      /* sw */
       7'b0100011: begin
-        reg_we     = 1'b0;
-        alu_src    = 1'b1;  // base + imm
-        alu_op     = 2'b01;  // ADD
+        result_src = 2'b00;
         mem_we     = 1'b1;
-        result_src = 1'b0;
-      end
-
-      // Branch (very simplified; pc_src needs real branch condition logic elsewhere)
-      7'b1100011: begin
+        alu_src    = 1'b1;
         reg_we     = 1'b0;
-        alu_src    = 1'b0;
-        alu_op     = 2'b11;  // SUB/compare (you can define this)
-        mem_we     = 1'b0;
-        result_src = 1'b0;
+        alu_op     = 2'b00;
+        branch     = 1'd0;
+        jump       = 1'd0;
       end
 
-      // AUIPC (writes rd = PC + imm)
-      7'b0010111: begin
-        reg_we     = 1'b1;
-        alu_src    = 1'b1;  // imm
-        alu_op     = 2'b01;  // ADD (PC + imm done in datapath via selecting PC as A)
+      /* R-type */
+      7'b0110011: begin
+        result_src = 2'b00;
         mem_we     = 1'b0;
-        result_src = 1'b0;
+        alu_src    = 1'b0;
+        reg_we     = 1'b1;
+        alu_op     = 2'b10;
+        branch     = 1'd0;
+        jump       = 1'd0;
+      end
+
+      /* beq */
+      7'b1100011: begin
+        result_src = 2'b00;
+        mem_we     = 1'b0;
+        alu_src    = 1'b0;
+        reg_we     = 1'b0;
+        alu_op     = 2'b01;
+        branch     = 1'd1;
+        jump       = 1'd0;
+      end
+
+      /* I-type ALU */
+      7'b0010011: begin
+        result_src = 2'b00;
+        mem_we     = 1'b0;
+        alu_src    = 1'b1;
+        reg_we     = 1'b1;
+        alu_op     = 2'b10;
+        branch     = 1'd0;
+        jump       = 1'd0;
+      end
+
+      /* jal */
+      7'b1101111: begin
+        result_src = 2'b10;
+        mem_we     = 1'b0;
+        alu_src    = 1'b0;
+        reg_we     = 1'b1;
+        alu_op     = 2'b00;
+        branch     = 1'd0;
+        jump       = 1'd1;
       end
 
       default: begin
-        // keep defaults
+        result_src = 2'b00;
+        mem_we     = 1'b0;
+        alu_src    = 1'b0;
+        reg_we     = 1'b0;
+        alu_op     = 2'b00;
+        branch     = 1'd0;
+        jump       = 1'd0;
       end
     endcase
   end

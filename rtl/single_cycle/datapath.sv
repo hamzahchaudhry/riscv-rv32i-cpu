@@ -1,13 +1,14 @@
 module datapath (
     input logic clk,
     input logic [31:0] instr,
+    input logic [31:0] next_pc,
 
     input logic [31:0] imm,
     input logic [31:0] mem_rd,
 
     input logic we,
     input logic alu_src,
-    input logic result_src,
+    input logic [1:0] result_src,
     input logic [2:0] alu_ctrl,
 
     output logic [31:0] mem_addr,
@@ -26,7 +27,7 @@ module datapath (
       .rs1(instr[19:15]),
       .rs2(instr[24:20]),
       .rd (instr[11:7]),
-      .wd (result_src ? alu_out : mem_rd),
+      .wd (result_src[0] ? mem_rd : (result_src[1] ? next_pc : alu_out)),
       .we (we),
       .rd1(rd1),
       .rd2(rd2)

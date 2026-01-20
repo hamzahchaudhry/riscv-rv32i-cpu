@@ -9,10 +9,13 @@ module singlecycle_top #(
   logic [31:0] pc_next, pc, instr;
   logic [31:0] addr, wd, rd;
   logic [31:0] imm_out;
-  logic pc_src, reg_we, alu_src, mem_we, result_src;
+  logic [31:0] pc_plus4, pc_target;
+  logic pc_src, reg_we, alu_src, mem_we, zero;
+  logic [1:0] result_src;
   logic [1:0] alu_op;
   logic [2:0] alu_ctrl;
 
+  /* simple instruction memory */
   imem #(
       .IMEM_INIT(IMEM_INIT)
   ) imem (
@@ -20,6 +23,7 @@ module singlecycle_top #(
       .instr(instr)
   );
 
+  /* simple data memory */
   dmem #(
       .DMEM_INIT(DMEM_INIT)
   ) dmem (
@@ -30,23 +34,28 @@ module singlecycle_top #(
       .rd  (rd)
   );
 
+  /* main control unit */
   control_unit cu (
       .opcode(instr[6:0]),
+      .zero(zero),
       .pc_src(pc_src),
-      .reg_we(reg_we),
-      .alu_src(alu_src),
-      .mem_we(mem_we),
       .result_src(result_src),
+      .mem_we(mem_we),
+      .alu_src(alu_src),
+      .reg_we(reg_we),
       .alu_op(alu_op)
   );
 
+  /* alu control unit */
   alu_control ac (
       .alu_op  (alu_op),
       .funct3  (instr[14:12]),
       .funct7_5(instr[30]),
+      .opcode_5(instr[5]),
       .alu_ctrl(alu_ctrl)
   );
 
+  /* PC */
   dff #(
       .WIDTH(32)
   ) pc_reg (
@@ -56,11 +65,21 @@ module singlecycle_top #(
       .q(pc)
   );
 
-  adder pc_adder (
+  /* next PC adder */
+  adder pc_plus4_adder (
       .a  (pc),
-      .b  (pc_src ? imm_out : 32'd4),
-      .out(pc_next)
+      .b  (32'd4),
+      .out(pc_plus4)
   );
+
+  /* branch target PC adder */
+  adder pc_target_adder (
+      .a  (pc),
+      .b  (imm_out),
+      .out(pc_target)
+  );
+
+  assign pc_next = pc_src ? pc_target : pc_plus4;
 
   imm_gen ig (
       .instr  (instr),
@@ -68,8 +87,9 @@ module singlecycle_top #(
   );
 
   datapath dp (
-      .clk  (clk),
+      .clk(clk),
       .instr(instr),
+      .next_pc(pc_plus4),
 
       .imm(imm_out),
       .mem_rd(rd),
@@ -81,8 +101,7 @@ module singlecycle_top #(
 
       .mem_addr(addr),
       .mem_wd(wd),
-      .zero()
+      .zero(zero)
   );
-
 
 endmodule

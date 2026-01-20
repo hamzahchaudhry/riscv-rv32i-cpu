@@ -57,3 +57,67 @@ Clean generated artifacts:
 ```sh
 make clean
 ```
+
+---
+
+## Supported instructions (single-cycle core)
+
+Checked = decoded/implemented in `rtl/single_cycle` (add tests to verify behavior).
+
+### R-type (register-register)
+
+- [x] `add`
+- [x] `sub`
+- [ ] `sll`
+- [x] `slt`
+- [ ] `sltu`
+- [ ] `xor`
+- [ ] `srl`
+- [ ] `sra`
+- [x] `or`
+- [x] `and`
+
+### I-type (immediate/loads/system/jalr)
+
+- [ ] `lb`
+- [ ] `lh`
+- [x] `lw`
+- [ ] `lbu`
+- [ ] `lhu`
+- [x] `addi`
+- [x] `slti`
+- [ ] `sltiu`
+- [ ] `xori`
+- [x] `ori`
+- [x] `andi`
+- [ ] `slli`
+- [ ] `srli`
+- [ ] `srai`
+- [ ] `jalr`
+- [ ] `fence`
+- [ ] `ecall`
+- [ ] `ebreak`
+
+### S-type (stores)
+
+- [ ] `sb`
+- [ ] `sh`
+- [x] `sw`
+
+### B-type (branches)
+
+- [x] `beq`
+- [ ] `bne`
+- [ ] `blt`
+- [ ] `bge`
+- [ ] `bltu`
+- [ ] `bgeu`
+
+### U-type (upper immediates)
+
+- [ ] `lui`
+- [ ] `auipc`
+
+### J-type (jumps)
+
+- [x] `jal`

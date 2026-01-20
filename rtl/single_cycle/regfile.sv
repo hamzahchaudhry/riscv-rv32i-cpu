@@ -11,7 +11,7 @@ module regfile (
     output logic [31:0] rd2
 );
 
-  logic [31:0] x[31:0];
+  logic [31:0] x[32];
 
   /* synchronous write port */
   always_ff @(posedge clk) begin
@@ -27,8 +27,7 @@ module regfile (
     rd1 = (rs1 == 5'd0) ? 32'b0 : x[rs1];
     rd2 = (rs2 == 5'd0) ? 32'b0 : x[rs2];
 
-    // Optional "write-through" bypass:
-    // Makes single-cycle cores nicer when an instruction reads and writes same reg "in the same cycle".
+    /* write-through bypass */
     if (we && (rd != 5'd0) && (rd == rs1)) rd1 = wd;
     if (we && (rd != 5'd0) && (rd == rs2)) rd2 = wd;
   end
