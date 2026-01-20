@@ -68,55 +68,55 @@ Checked = decoded/implemented in `rtl/single_cycle` (add tests to verify behavio
 
 - [x] `add`
 - [x] `sub`
-- [ ] `sll`
+- [x] `sll`
 - [x] `slt`
-- [ ] `sltu`
-- [ ] `xor`
-- [ ] `srl`
-- [ ] `sra`
+- [x] `sltu`
+- [x] `xor`
+- [x] `srl`
+- [x] `sra`
 - [x] `or`
 - [x] `and`
 
 ### I-type (immediate/loads/system/jalr)
 
-- [ ] `lb`
-- [ ] `lh`
+- [x] `lb`
+- [x] `lh`
 - [x] `lw`
-- [ ] `lbu`
-- [ ] `lhu`
+- [x] `lbu`
+- [x] `lhu`
 - [x] `addi`
 - [x] `slti`
-- [ ] `sltiu`
-- [ ] `xori`
+- [x] `sltiu`
+- [x] `xori`
 - [x] `ori`
 - [x] `andi`
-- [ ] `slli`
-- [ ] `srli`
-- [ ] `srai`
-- [ ] `jalr`
+- [x] `slli`
+- [x] `srli`
+- [x] `srai`
+- [x] `jalr`
 - [ ] `fence`
 - [ ] `ecall`
 - [ ] `ebreak`
 
 ### S-type (stores)
 
-- [ ] `sb`
-- [ ] `sh`
+- [x] `sb`
+- [x] `sh`
 - [x] `sw`
 
 ### B-type (branches)
 
 - [x] `beq`
-- [ ] `bne`
-- [ ] `blt`
-- [ ] `bge`
-- [ ] `bltu`
-- [ ] `bgeu`
+- [x] `bne`
+- [x] `blt`
+- [x] `bge`
+- [x] `bltu`
+- [x] `bgeu`
 
 ### U-type (upper immediates)
 
-- [ ] `lui`
-- [ ] `auipc`
+- [x] `lui`
+- [x] `auipc`
 
 ### J-type (jumps)
 

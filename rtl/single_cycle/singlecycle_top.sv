@@ -10,10 +10,11 @@ module singlecycle_top #(
   logic [31:0] addr, wd, rd;
   logic [31:0] imm_out;
   logic [31:0] pc_plus4, pc_target;
-  logic pc_src, reg_we, alu_src, mem_we, zero;
+  logic pc_src, reg_we, alu_src, mem_we, zero, alu_a_src, jalr;
+  logic [31:0] jalr_target;
   logic [1:0] result_src;
   logic [1:0] alu_op;
-  logic [2:0] alu_ctrl;
+  logic [3:0] alu_ctrl;
 
   /* simple instruction memory */
   imem #(
@@ -27,23 +28,27 @@ module singlecycle_top #(
   dmem #(
       .DMEM_INIT(DMEM_INIT)
   ) dmem (
-      .clk (clk),
-      .we  (mem_we),
+      .clk(clk),
+      .we(mem_we),
+      .funct3(instr[14:12]),
       .addr(addr),
-      .wd  (wd),
-      .rd  (rd)
+      .wd(wd),
+      .rd(rd)
   );
 
   /* main control unit */
   control_unit cu (
       .opcode(instr[6:0]),
+      .funct3(instr[14:12]),
       .zero(zero),
       .pc_src(pc_src),
       .result_src(result_src),
       .mem_we(mem_we),
+      .alu_a_src(alu_a_src),
       .alu_src(alu_src),
       .reg_we(reg_we),
-      .alu_op(alu_op)
+      .alu_op(alu_op),
+      .jalr(jalr)
   );
 
   /* alu control unit */
@@ -79,7 +84,8 @@ module singlecycle_top #(
       .out(pc_target)
   );
 
-  assign pc_next = pc_src ? pc_target : pc_plus4;
+  assign jalr_target = {addr[31:1], 1'b0};
+  assign pc_next = pc_src ? (jalr ? jalr_target : pc_target) : pc_plus4;
 
   imm_gen ig (
       .instr  (instr),
@@ -89,12 +95,14 @@ module singlecycle_top #(
   datapath dp (
       .clk(clk),
       .instr(instr),
+      .pc(pc),
       .next_pc(pc_plus4),
 
       .imm(imm_out),
       .mem_rd(rd),
 
       .we(reg_we),
+      .alu_a_src(alu_a_src),
       .alu_src(alu_src),
       .result_src(result_src),
       .alu_ctrl(alu_ctrl),

@@ -6,7 +6,7 @@ module imem #(
 );
 
   /* 256 words of 32-bit instruction memory */
-  logic [31:0] mem [0:255];
+  logic [31:0] mem [256];
 
   /* word index: 256 words -> 8 bits, use pc bits [9:2] */
   logic [ 7:0] idx;
